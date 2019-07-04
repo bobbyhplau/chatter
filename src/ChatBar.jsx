@@ -9,47 +9,31 @@ class ChatBar extends Component {
             message: ''
         }
         this.handleChange = this.handleChange.bind(this);
-        this.generateId = this.generateId.bind(this);
     }
 
     onKeyUp(event) {
         if (event.keyCode === 13) {
-            const newMessage = {
-                id: this.generateId(),
-                username: this.state.username,
-                content: this.state.message
+            if (event.target.name === 'message') {
+                this.props.addMessage(this.state.message);
+                this.setState({ message: '' });
+            } else if (event.target.name === 'username') {
+                this.props.setUsername(this.state.username);
             }
-
-            console.log(newMessage);
-
-            this.props.addMessage(newMessage);
         }
     }
 
     handleChange(event) {
-        this.setState({ message: event.target.value });
-    }
-
-    generateId() {
-        const possibleLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        const length = possibleLetters.length;
-
-        let randomId = '';
-
-        for (let i = 0; i < 10; i++) {
-            const randomLetter = possibleLetters.charAt(Math.floor(Math.random() * length));
-            randomId += randomLetter;
-        }
-
-        return randomId;
+        this.setState({
+            [event.target.name]: event.target.value
+        });
     }
 
     render() {
         return (
             <form onKeyUp={this.onKeyUp.bind(this)}>
             <footer className='chatbar'>
-                    <input className='chatbar-username' placeholder='Your Name (Optional)' value={this.props.currentUser.name} />
-                    <input className='chatbar-message' placeholder='Type a message and hit ENTER' value={this.state.message} onChange={this.handleChange}/>
+                    <input className='chatbar-username' name='username' placeholder='Your Name (Optional)' value={this.state.username} onChange={this.handleChange} />
+                    <input className='chatbar-message' name='message' placeholder='Type a message and hit ENTER' value={this.state.message} onChange={this.handleChange}/>
             </footer>
             </form>
         )

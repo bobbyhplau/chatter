@@ -8,24 +8,23 @@ class App extends Component {
         super(props);
         this.state = {
             currentUser: { name: 'Bob' }, // optional. if currentUser is not defined, it means the user is Anonymous
-            messages: [{
-                    id: 'AAAAA11111',
-                    username: 'Bob',
-                    content: 'Has anyone seen my marbles?',
-                },
-                {
-                    id: 'BBBBB22222',
-                    username: 'Anonymous',
-                    content: 'No, I think you lost them. You lost your marbles Bob. You lost them for good.'
-                }
-            ]
+            messages: []
         };
         this.addMessage = this.addMessage.bind(this);
+        this.setUsername = this.setUsername.bind(this);
     }
 
-    addMessage(message) {
-        this.setState({ messages: [...this.state.messages, message] });
-        this.socket.send(JSON.stringify(message));
+    addMessage(content) {
+        const newMessage = {
+            type: 'postMessage',
+            username: this.state.currentUser.name,
+            content: content
+        }
+        this.socket.send(JSON.stringify(newMessage));
+    }
+
+    setUsername(username) {
+        this.setState({ currentUser: { name: username } });
     }
 
     componentDidMount() {
@@ -41,6 +40,11 @@ class App extends Component {
         }, 3000);
 
         this.socket = new WebSocket('ws://localhost:3001');
+        this.socket.onopen = () => {
+            this.socket.onmessage = event => {
+                this.setState({ messages: [...this.state.messages, (JSON.parse(event.data))] });
+            }
+        }
     }
 
     render() {
@@ -49,7 +53,7 @@ class App extends Component {
               <nav className='navbar'>
                <a href='/' className='navbar-brand'>Chatty</a>
               </nav>
-              <ChatBar currentUser={this.state.currentUser} addMessage={this.addMessage}/>
+              <ChatBar currentUser={this.state.currentUser} addMessage={this.addMessage} setUsername={this.setUsername}/>
               <MessageList messages={this.state.messages}/>
             </div>
         )
