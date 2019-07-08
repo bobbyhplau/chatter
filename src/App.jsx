@@ -7,8 +7,9 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentUser: { name: 'Bob' }, // optional. if currentUser is not defined, it means the user is Anonymous
-            messages: []
+            currentUser: { name: 'Anonymous' }, // optional. if currentUser is not defined, it means the user is Anonymous
+            messages: [],
+            usercount: 0
         };
         this.addMessage = this.addMessage.bind(this);
         this.setUsername = this.setUsername.bind(this);
@@ -24,25 +25,22 @@ class App extends Component {
     }
 
     setUsername(username) {
+        const newNotification = `${this.state.currentUser.name} has changed their name to ${username}`;
+        const notificationObject = { type: 'postNotification', content: newNotification };
+        this.socket.send(JSON.stringify(notificationObject));
         this.setState({ currentUser: { name: username } });
     }
 
     componentDidMount() {
-        console.log('componentDidMount <App />');
-        setTimeout(() => {
-            console.log('Simulating incoming message');
-            // Add a new message to the list of messages in the data store
-            const newMessage = { id: 3, username: 'Michelle', content: 'Hello there!' };
-            const messages = this.state.messages.concat(newMessage)
-            // Update the state of the app component.
-            // Calling setState will trigger a call to render() in App and all child components.
-            this.setState({ messages: messages })
-        }, 3000);
-
         this.socket = new WebSocket('ws://localhost:3001');
         this.socket.onopen = () => {
             this.socket.onmessage = event => {
-                this.setState({ messages: [...this.state.messages, (JSON.parse(event.data))] });
+                const incomingData = JSON.parse(event.data);
+                if (incomingData.type === 'incomingUserCount') {
+                    this.setState({ usercount: incomingData.numberOfUsers });
+                } else {
+                    this.setState({ messages: [...this.state.messages, incomingData] });
+                }
             }
         }
     }
@@ -52,6 +50,7 @@ class App extends Component {
             <div>
               <nav className='navbar'>
                <a href='/' className='navbar-brand'>Chatty</a>
+               <div className='users-online'>{this.state.usercount} users online</div>
               </nav>
               <ChatBar currentUser={this.state.currentUser} addMessage={this.addMessage} setUsername={this.setUsername}/>
               <MessageList messages={this.state.messages}/>
