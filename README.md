@@ -1,46 +1,37 @@
-React Boilerplate
-=====================
+# chatter
 
-A minimal and light dev environment for ReactJS.
+## Overview
 
-### Usage
+Chatter is a simple web chat app made using React.js
 
-Clone the boilerplate and create your own git repo.
+## Node Skeleton
 
-```
-git clone git@github.com:lighthouse-labs/react-simple-boilerplate.git
-cd react-simple-boilerplate
-git remote rm origin
-git remote add origin [YOUR NEW REPOSITORY]
-# Manually update your package.json file
-```
+## Project Setup
 
-Install the dependencies and start the server.
+1. Create your own empty repo on GitHub
+2. Clone this repository (do not fork)
+  - Suggestion: When cloning, specify a different folder name that is relevant to your project
+3. Remove the git remote: `git remote rm origin`
+4. Add a remote for your origin: `git remote add origin <your github repo URL>`
+5. Push to the new origin: `git push -u origin master`
+6. Verify that the skeleton code now shows up in your repo on GitHub
 
-```
-npm install
-npm start
-open http://localhost:3000
-```
+## Getting Started
 
-### Static Files
+1. Install dependencies: `npm i`
+2. Run the server: `npm run local`
+3. Open a second terminal
+4. Go into the chatty_server folder
+5. Install dependencies: `npm i`
+6. Visit `http://localhost:8080/`
 
-You can store static files like images, fonts, etc in the `build` folder.
+## Screenshots
 
-For example, if you copy a file called my_image.png into the build folder you can access it using `http://localhost:3000/build/my_image.png`.
-
-### Linting
-
-This boilerplate project includes React ESLint configuration.
-
-```
-npm run lint
-```
-
-### Dependencies
+## Dependencies
 
 * React
 * Webpack
 * [babel-loader](https://github.com/babel/babel-loader)
 * [webpack-dev-server](https://github.com/webpack/webpack-dev-server)
+* Express
 * ws
